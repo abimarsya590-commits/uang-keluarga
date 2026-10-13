@@ -22,9 +22,17 @@ jobs:
         with:
           gradle-version: '8.9'
 
+      
       - name: Extract project ZIP
         run: |
-          unzip -o UangKeluargaAndroid-cloud-build.zip -d extracted
+          ZIP_FILE=$(find . -type f -iname '*.zip' -print -quit)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "File ZIP tidak ditemukan di repositori."
+            exit 1
+          fi
+          echo "Menggunakan file: $ZIP_FILE"
+          mkdir -p extracted
+          unzip -o "$ZIP_FILE" -d extracted
           cp -a extracted/. .
 
       - name: Build debug APK
