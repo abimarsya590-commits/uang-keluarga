@@ -21,10 +21,11 @@ steps:
     uses: gradle/actions/setup-gradle@v4
 
   - name: Extract project ZIP
+    shell: bash
     run: |
       ZIP_FILE="$(find . -maxdepth 1 -type f -iname '*.zip' -print -quit)"
       if [ -z "$ZIP_FILE" ]; then
-        echo "File ZIP tidak ditemukan di repositori."
+        echo "File ZIP tidak ditemukan."
         exit 1
       fi
 
@@ -34,17 +35,17 @@ steps:
       BUILD_FILE="$(find extracted -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit)"
 
       if [ -z "$BUILD_FILE" ]; then
-        echo "File settings.gradle tidak ditemukan di dalam ZIP."
-        echo "Daftar file proyek:"
+        echo "settings.gradle tidak ditemukan di dalam ZIP."
         find extracted -maxdepth 4 -type f | head -100
         exit 1
       fi
 
       PROJECT_DIR="$(dirname "$BUILD_FILE")"
-      echo "Proyek Android ditemukan di: $PROJECT_DIR"
       echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+      echo "Proyek ditemukan: $PROJECT_DIR"
 
   - name: Build debug APK
+    shell: bash
     run: |
       cd "$PROJECT_DIR"
       gradle assembleDebug
