@@ -1,58 +1,58 @@
 name: Build Uang Keluarga APK
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout project
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
 
-  - name: Set up Java
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: '17'
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-  - name: Set up Gradle
-    uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-  - name: Extract project ZIP
-    shell: bash
-    run: |
-      ZIP_FILE="$(find . -maxdepth 1 -type f -iname '*.zip' -print -quit)"
-      if [ -z "$ZIP_FILE" ]; then
-        echo "File ZIP tidak ditemukan."
-        exit 1
-      fi
+      - name: Extract project ZIP
+        shell: bash
+        run: |
+          ZIP_FILE="$(find . -maxdepth 1 -type f -iname '*.zip' -print -quit)"
+          if [ -z "$ZIP_FILE" ]; then
+            echo "File ZIP tidak ditemukan."
+            exit 1
+          fi
 
-      mkdir -p extracted
-      unzip -o "$ZIP_FILE" -d extracted
+          mkdir -p extracted
+          unzip -o "$ZIP_FILE" -d extracted
 
-      BUILD_FILE="$(find extracted -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit)"
+          BUILD_FILE="$(find extracted -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit)"
 
-      if [ -z "$BUILD_FILE" ]; then
-        echo "settings.gradle tidak ditemukan di dalam ZIP."
-        find extracted -maxdepth 4 -type f | head -100
-        exit 1
-      fi
+          if [ -z "$BUILD_FILE" ]; then
+            echo "settings.gradle tidak ditemukan di dalam ZIP."
+            find extracted -maxdepth 4 -type f | head -100
+            exit 1
+          fi
 
-      PROJECT_DIR="$(dirname "$BUILD_FILE")"
-      echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-      echo "Proyek ditemukan: $PROJECT_DIR"
+          PROJECT_DIR="$(dirname "$BUILD_FILE")"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          echo "Proyek ditemukan: $PROJECT_DIR"
 
-  - name: Build debug APK
-    shell: bash
-    run: |
-      cd "$PROJECT_DIR"
-      gradle assembleDebug
+      - name: Build debug APK
+        shell: bash
+        run: |
+          cd "$PROJECT_DIR"
+          gradle assembleDebug
 
-  - name: Upload APK
-    uses: actions/upload-artifact@v4
-    with:
-      name: Uang-Keluarga-APK
-      path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
-      if-no-files-found: error
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Uang-Keluarga-APK
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
