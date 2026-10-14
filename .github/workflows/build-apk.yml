@@ -24,11 +24,10 @@ jobs:
         shell: bash
         run: |
           ZIP_FILE="./UangKeluargaAndroid-source-baru.zip"
-          if [ -z "$ZIP_FILE" ]; then
-            echo "File ZIP tidak ditemukan."
-            exit 1
-          fi
-
+if [ ! -f "$ZIP_FILE" ]; then
+  echo "File ZIP baru tidak ditemukan."
+  exit 1
+fi
           mkdir -p extracted
           unzip -o "$ZIP_FILE" -d extracted
 
