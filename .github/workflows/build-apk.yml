@@ -20,14 +20,17 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      
       - name: Extract project ZIP
         shell: bash
         run: |
           ZIP_FILE="./UangKeluargaAndroid-source-baru.zip"
-if [ ! -f "$ZIP_FILE" ]; then
-  echo "File ZIP baru tidak ditemukan."
-  exit 1
-fi
+
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "File ZIP baru tidak ditemukan."
+            exit 1
+          fi
+
           mkdir -p extracted
           unzip -o "$ZIP_FILE" -d extracted
 
@@ -42,6 +45,7 @@ fi
           PROJECT_DIR="$(dirname "$BUILD_FILE")"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
           echo "Proyek ditemukan: $PROJECT_DIR"
+
 
       - name: Build debug APK
         shell: bash
